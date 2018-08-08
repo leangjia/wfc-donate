@@ -10,8 +10,8 @@ var serport=8089;
 var client = new bitcoin.Client({
   host: 'localhost',
   port: 9665,
-  user: 'test',
-  pass: 'admin',
+  user: '1234',
+  pass: '1234',
   timeout: 30000
 });
 function setcor(res) {
