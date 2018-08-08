@@ -59,7 +59,6 @@
                      let vfurl=baseUrl+'checkaddr/'+address;
                    self.$axios.get(vfurl).then((res) => {
                    console.log("GET-"+res.data.code);
-	           console.log("GET-"+res.data.uid);
 		   console.log("GET-"+res.data.msg);
                    if(res.data.code===200){
                      console.log(url);
