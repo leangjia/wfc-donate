@@ -12,8 +12,14 @@
                 <el-form-item prop="desc">
                     <el-input v-model="ruleForm.desc" placeholder="desc"></el-input>
                 </el-form-item>
+                <el-form-item prop="turl">
+                    <el-input v-model="ruleForm.turl"></el-input>
+                </el-form-item>
                 <div class="ret-btn">
                     <el-button type="primary" @click="submitForm('ruleForm')">发起捐赠</el-button>
+                </div>
+                <div class="bak-btn">
+                    <el-button type="primary" @click="backForm('ruleForm')">生成链接</el-button>
                 </div>
             </el-form>
         </div>
@@ -21,7 +27,7 @@
 </template>
 
 <script>
-    var baseUrl = 'http://localhost:8089/';
+    var baseUrl = 'http://localhost:8088/';
     if(process.env.NODE_ENV === 'production'){
        baseUrl='/';
     }
@@ -32,6 +38,7 @@
                     amount: '',
                     address: '',
                     desc: '',
+                    turl: ''
                 },
                 rules: {
                     amount: [
@@ -55,10 +62,11 @@
                      let amount=self.ruleForm.amount;
                      let address =self.ruleForm.address;
                      let desc=self.ruleForm.desc;
-                     let url='https://wfc.xyblock.net/#/wifiPortal/donate'+'?toAmount='+amount+'&toAddress='+address+'&payTitle='+desc;
+                     let url='https://wfc.xyblock.net/#/wifiPortal/donate'+'?toAmount='+amount+'&toAddress='+address+'&payTitle='+encodeURI(desc);
                      let vfurl=baseUrl+'checkaddr/'+address;
                    self.$axios.get(vfurl).then((res) => {
                    console.log("GET-"+res.data.code);
+	           console.log("GET-"+res.data.uid);
 		   console.log("GET-"+res.data.msg);
                    if(res.data.code===200){
                      console.log(url);
@@ -73,6 +81,34 @@
                        console.log('验证失败');
                      }
                  });
+            },
+            backForm(formName) {
+               const self = this;
+                self.$refs[formName].validate(function(valid){
+                    if(valid){
+                     console.log('验证成功');
+                     let amount=self.ruleForm.amount;
+                     let address =self.ruleForm.address;
+                     let desc=self.ruleForm.desc;
+                     let url='https://wfc.xyblock.net/#/wifiPortal/donate'+'?toAmount='+amount+'&toAddress='+address+'&payTitle='+encodeURI(desc);
+                     let vfurl=baseUrl+'checkaddr/'+address;
+                   self.$axios.get(vfurl).then((res) => {
+                   console.log("GET-"+res.data.code);
+	           console.log("GET-"+res.data.uid);
+		   console.log("GET-"+res.data.msg);
+                   if(res.data.code===200){
+                     console.log(url);
+                     self.ruleForm.turl=url;
+                   }else
+                   {
+                      alert(res.data.msg)
+                   }
+                   })
+                     }else{
+                       return false;
+                       console.log('验证失败');
+                     }
+                 });               
             }
         }
     }
@@ -99,13 +135,20 @@
         left:50%;
         top:50%;
         width:280px;
-        height:240px;
+        height:340px;
         margin:-150px 0 0 -180px;
         padding:40px;
         border-radius: 5px;
         background: #fff;
     }
     .ret-btn button{
+        text-align: center;
+	position: relative;
+        width:100%;
+        margin:0px 0px 5px 0px;
+        height:35px;
+    }
+    .bak-btn button{
         text-align: center;
 	position: relative;
         width:100%;
